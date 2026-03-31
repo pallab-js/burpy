@@ -15,8 +15,8 @@ class RequestRepeater:
         self.session = requests.Session()
         self.session.verify = False
         
-    def send_request(self, method: str, url: str, headers: Dict[str, str] = None, 
-                    data: str = None, params: Dict[str, str] = None) -> Dict[str, Any]:
+    def send_request(self, method: str, url: str, headers: Optional[Dict[str, str]] = None, 
+                    data: Optional[str] = None, params: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
         """Send an HTTP request and return response details"""
         
         try:

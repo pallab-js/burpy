@@ -1,199 +1,121 @@
-# Burpy
+# Burpy 🛡️
 
-A lightweight CLI-based web security testing tool similar to Burp Suite, designed to run on any average PC without requiring cloud services, Docker, or complex deployment.
+A powerful, CLI-based web security testing tool inspired by Burp Suite and Caido. Designed for security professionals, developers, and penetration testers who need a lightweight, terminal-focused alternative for web application security testing.
 
-## Features
+![Python Version](https://img.shields.io/badge/Python-3.7+-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
-- **HTTP Proxy**: Intercept and modify HTTP/HTTPS traffic
-- **Vulnerability Scanner**: Automated scanning for common web vulnerabilities
-- **Request Repeater**: Manual testing and request modification
-- **Intruder**: Automated fuzzing and brute force attacks
-- **History Logger**: Track and search request/response history
-- **Cross-platform**: Works on Windows, macOS, and Linux
+## ⚡ Features
 
-## Installation
+### Core Security Testing
+- **HTTP/HTTPS Proxy** - Intercept and modify web traffic with CONNECT tunneling for HTTPS
+- **Vulnerability Scanner** - Automated detection of SQLi, XSS, directory traversal, sensitive files
+- **Request Repeater** - Manual testing with custom headers, methods, and body data
+- **Intruder/Fuzzer** - Parameter fuzzing, directory brute-forcing, rate limiting support
+- **GraphQL Security Scanner** - Introspection detection, batch queries, DoS testing
 
-### From Source
+### Automation & Integration
+- **Macro Automation** - Record and replay request sequences with variable extraction
+- **CI/CD Export** - Generate reports in JSON, SARIF, CSV, HTML, Markdown, JUnit formats
+- **Session Management** - Cookie handling, token management, authentication state
 
-1. Clone the repository:
+### CLI Experience
+- **Professional Output** - Color-coded, well-structured results for technical and non-technical users
+- **Multiple Export Formats** - Export scan results for GitHub, GitLab, Jenkins integration
+- **Request History** - Track, search, and export all HTTP requests
+
+## 🚀 Quick Start
+
 ```bash
-git clone https://github.com/yourusername/burpy.git
-cd burpy
-```
-
-2. Install dependencies:
-```bash
+# Installation
 pip install -r requirements.txt
-```
-
-3. Install Burpy:
-```bash
 pip install -e .
-```
 
-### Direct Usage
-
-You can also run Burpy directly without installation:
-
-```bash
+# Or run directly
 python -m burpy
 ```
 
-## Quick Start
+## 📖 Commands
 
-### 1. Start the Proxy Server
+| Command | Description | Example |
+|---------|-------------|---------|
+| `proxy` | Start HTTP/HTTPS intercepting proxy | `burpy proxy --port 8080` |
+| `scan` | Scan for web vulnerabilities | `burpy scan https://example.com -v` |
+| `repeat` | Send custom HTTP requests | `burpy repeat https://api.example.com -m POST` |
+| `fuzz` | Fuzz parameters with wordlist | `burpy fuzz https://site.com id -w list.txt` |
+| `attack` | Automated attack with rate limiting | `burpy attack https://site.com -t 20` |
+| `graphql` | Test GraphQL security | `burpy graphql https://api.example.com/graphql` |
+| `history` | View request history | `burpy history --limit 50` |
+| `export` | Export results (CI/CD formats) | `burpy export https://site.com -f sarif -o report.sarif` |
+| `info` | Show help and options | `burpy info` |
+
+## 🔧 Options
 
 ```bash
-burpy proxy --host 127.0.0.1 --port 8080 --verbose
+-q, --quiet      # Suppress banner
+-v, --verbose    # Detailed output
+-o, --output     # Output file
+-H, --header     # Custom HTTP header
+-d, --data       # Request body data
+-w, --wordlist   # Wordlist file
+-t, --threads    # Number of threads
+-f, --format     # Output format (json/csv/html/sarif/markdown/junit)
 ```
 
-Configure your browser to use `127.0.0.1:8080` as HTTP proxy.
-
-### 2. Scan for Vulnerabilities
+## 💡 Examples
 
 ```bash
+# Quick vulnerability scan
 burpy scan https://example.com --verbose
+
+# Custom request with authentication
+burpy repeat https://api.site.com/users -m GET -H "Authorization: Bearer token"
+
+# Parameter fuzzing
+burpy fuzz https://site.com/search q -w wordlist.txt -t 20
+
+# Export for CI/CD pipeline
+burpy export https://site.com -f sarif -o results.sarif
+
+# Start intercepting proxy
+burpy proxy --host 127.0.0.1 --port 8080 --verbose
+
+# GraphQL security testing
+burpy graphql https://api.example.com/graphql
 ```
 
-### 3. Use the Repeater
-
-```bash
-burpy repeat https://example.com/api/users --method POST --data '{"username":"admin"}'
-```
-
-### 4. Fuzz Parameters
-
-```bash
-burpy fuzz https://example.com/search --parameter q --wordlist wordlist.txt
-```
-
-### 5. View History
-
-```bash
-burpy history --limit 50
-```
-
-## Commands
-
-### Proxy Commands
-
-- `burpy proxy` - Start HTTP proxy server
-- `--host HOST` - Proxy host (default: 127.0.0.1)
-- `--port PORT` - Proxy port (default: 8080)
-- `--verbose` - Enable verbose output
-
-### Scanner Commands
-
-- `burpy scan URL` - Scan URL for vulnerabilities
-- `--output FILE` - Save results to file
-- `--verbose` - Show detailed results
-
-### Repeater Commands
-
-- `burpy repeat URL` - Send HTTP request
-- `--method METHOD` - HTTP method (default: GET)
-- `--header "key:value"` - Add HTTP header
-- `--data DATA` - Request body data
-
-### Intruder Commands
-
-- `burpy fuzz URL PARAMETER` - Fuzz parameter
-- `--wordlist FILE` - Custom wordlist file
-- `--threads N` - Number of threads (default: 10)
-
-### History Commands
-
-- `burpy history` - Show request history
-- `burpy search QUERY` - Search history
-- `--limit N` - Limit number of results
-
-## Configuration
-
-Burpy creates a configuration file (`burpy_config.json`) in the current directory. You can modify settings like:
-
-- Proxy host and port
-- Scanner timeout and threads
-- Intruder settings
-- Output preferences
-
-## Security Features
+## 🛡️ Security Checks
 
 ### Vulnerability Scanner
-
 - SQL Injection detection
-- Cross-Site Scripting (XSS) testing
-- Directory traversal checks
+- Cross-Site Scripting (XSS)
+- Directory traversal
 - Sensitive file discovery
 - HTTP method enumeration
 - Security header analysis
 
-### Intruder Module
+### GraphQL Testing
+- Introspection enabled detection
+- Batch query vulnerabilities
+- DoS via aggregate queries
+- Dangerous mutations
 
-- Parameter fuzzing
-- Authentication brute forcing
-- Directory brute forcing
-- SQL injection testing
-
-## Examples
-
-### Basic Web Application Testing
-
-1. Start proxy and configure browser
-2. Browse the target application
-3. Review captured requests in history
-4. Use repeater to modify and resend requests
-5. Run vulnerability scanner on interesting endpoints
-6. Use intruder for automated testing
-
-### API Testing
-
-```bash
-# Test API endpoint
-burpy repeat https://api.example.com/users --method GET --header "Authorization: Bearer token123"
-
-# Fuzz API parameters
-burpy fuzz https://api.example.com/search --parameter q --wordlist api_wordlist.txt
-
-# Scan API for vulnerabilities
-burpy scan https://api.example.com/users --verbose
-```
-
-## Requirements
-
-- Python 3.7+
-- Internet connection for target testing
-- Browser for proxy testing
-
-## Dependencies
+## 📦 Dependencies
 
 - `requests` - HTTP library
 - `click` - CLI framework
 - `colorama` - Colored terminal output
-- `pyyaml` - Configuration files
 - `cryptography` - SSL/TLS support
 
-## Contributing
+## ⚠️ Disclaimer
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+This tool is for **authorized security testing only**. Only use on systems you own or have explicit permission to test. The authors are not responsible for any misuse.
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
-## Disclaimer
+## 🤝 Contributing
 
-This tool is for educational and authorized testing purposes only. Only use it on systems you own or have explicit permission to test. The authors are not responsible for any misuse of this tool.
-
-## Roadmap
-
-- [ ] HTTPS proxy support
-- [ ] Web interface
-- [ ] Plugin system
-- [ ] More vulnerability checks
-- [ ] Report generation
-- [ ] Session management
-- [ ] Advanced fuzzing techniques
+Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.

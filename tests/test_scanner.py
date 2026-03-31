@@ -15,7 +15,7 @@ class TestVulnerabilityScanner:
         scanner = VulnerabilityScanner()
         assert scanner.session is not None
         assert scanner.session.verify is False
-        assert scanner.session.timeout == 10
+        assert scanner._timeout == 10
     
     @patch('requests.Session.get')
     def test_scan_url_connection_success(self, mock_get):

@@ -7,22 +7,42 @@ import threading
 import time
 from typing import List, Dict, Any, Callable, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urlparse, urlencode
 
 
 class Intruder:
     """Tool for automated attacks and fuzzing"""
     
-    def __init__(self, max_threads: int = 10):
+    def __init__(self, max_threads: int = 10, delay: float = 0.0):
         self.max_threads = max_threads
+        self.delay = delay
         self.session = requests.Session()
         self.session.verify = False
+        self._request_count = 0
+        self._last_request_time = 0
+        self._lock = threading.Lock()
+    
+    def set_delay(self, delay: float) -> None:
+        """Set delay between requests in seconds"""
+        self.delay = max(0, delay)
+        
+    def _rate_limit(self) -> None:
+        """Apply rate limiting between requests"""
+        if self.delay > 0:
+            with self._lock:
+                now = time.time()
+                elapsed = now - self._last_request_time
+                if elapsed < self.delay:
+                    time.sleep(self.delay - elapsed)
+                self._last_request_time = time.time()
         
     def fuzz_parameter(self, url: str, parameter: str, wordlist: List[str], 
-                      method: str = "GET", headers: Dict[str, str] = None) -> List[Dict[str, Any]]:
+                      method: str = "GET", headers: Optional[Dict[str, str]] = None) -> List[Dict[str, Any]]:
         """Fuzz a parameter with a wordlist"""
         results = []
         
         def fuzz_single(payload: str) -> Dict[str, Any]:
+            self._rate_limit()
             try:
                 params = {parameter: payload}
                 response = self.session.request(
@@ -58,7 +78,7 @@ class Intruder:
         
     def brute_force_auth(self, url: str, username_field: str, password_field: str,
                         usernames: List[str], passwords: List[str],
-                        method: str = "POST", headers: Dict[str, str] = None) -> List[Dict[str, Any]]:
+                        method: str = "POST", headers: Optional[Dict[str, str]] = None) -> List[Dict[str, Any]]:
         """Brute force authentication"""
         results = []
         
@@ -134,7 +154,7 @@ class Intruder:
                 
         return results
         
-    def sql_injection_test(self, url: str, parameter: str, payloads: List[str] = None) -> List[Dict[str, Any]]:
+    def sql_injection_test(self, url: str, parameter: str, payloads: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """Test for SQL injection vulnerabilities"""
         if payloads is None:
             payloads = [
